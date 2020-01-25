@@ -170,13 +170,15 @@ GImage *GImageReadGif(char *filename) {
 
     if ( DGifSlurp(gif)!=GIF_OK ) {
 	fprintf(stderr,"Bad input file \"%s\"\n",filename );
-	DGifCloseFile(gif);
+	int ErrorCode;
+	DGifCloseFile(gif, &ErrorCode);
 	return( NULL );
     }
 
     /* Process each image so that it/they can be imported into FF. */
     if ( (images=(GImage **) malloc(gif->ImageCount*sizeof(GImage *)))==NULL ) {
-	DGifCloseFile(gif);
+	int ErrorCode;
+	DGifCloseFile(gif, &ErrorCode);
 	NoMoreMemMessage();
 	return( NULL );
     }
@@ -185,7 +187,8 @@ GImage *GImageReadGif(char *filename) {
 	if ( (images[i]=ProcessSavedImage(gif,&gif->SavedImages[i],il))==NULL ) {
 	    while ( --i>=0 ) free(images[i]);
 	    free(images);
-	    DGifCloseFile(gif);
+		int ErrorCode;
+		DGifCloseFile(gif, &ErrorCode);
 	    return( NULL );
 	}
     }
@@ -195,7 +198,8 @@ GImage *GImageReadGif(char *filename) {
 	ret = images[0];
     else
 	ret = GImageCreateAnimation(images,gif->ImageCount);
-    DGifCloseFile(gif);
+	int ErrorCode;
+	DGifCloseFile(gif, &ErrorCode);
     free(images);
     return( ret );
 }
